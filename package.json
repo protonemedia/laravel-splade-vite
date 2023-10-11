@@ -1,0 +1,41 @@
+{
+    "name": "@protonemedia/laravel-splade-vite",
+    "version": "1.0.0",
+    "description": "Vite plugin for Laravel Splade",
+    "private": false,
+    "keywords": [
+        "vite",
+        "vite-plugin",
+        "laravel",
+        "splade",
+        "laravel-splade",
+        "laravel-splade-vite"
+    ],
+    "author": "Pascal Baljet <pascal@protone.media>",
+    "license": "MIT",
+    "type": "module",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/index.mjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "scripts": {
+        "build": "npx unbuild",
+        "prepack": "npm run build"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^20.5.1",
+        "typescript": "^5.1.6",
+        "unbuild": "^1.2.1",
+        "vite": "^4.4.9"
+    }
+}
