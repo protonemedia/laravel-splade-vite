@@ -16,7 +16,7 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
       resolvedConfig = config;
       console.log("Laravel Splade Vite plugin: config resolved");
     },
-    buildStart() {
+    async buildStart() {
       if (!resolvedConfig) {
         console.error("Laravel Splade Vite plugin: config not resolved");
         return;
@@ -28,7 +28,7 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
 
       console.log("Laravel Splade Vite plugin: Processing components...");
 
-      exec(`${phpBinary} ${command}`, (error, stdout, stderr) => {
+      await exec(`${phpBinary} ${command}`, (error, stdout, stderr) => {
         if (error) {
           console.error(`error: ${error.message}`);
           return;
