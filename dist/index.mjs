@@ -5,20 +5,27 @@ function LaravelSplade(config = {}) {
   const phpBinary = config?.phpBinary ?? "php";
   return {
     name: "laravel-splade-vite",
+    enforce: "pre",
     configResolved(config2) {
       resolvedConfig = config2;
+      console.log("Laravel Splade Vite plugin: config resolved");
     },
-    buildStart: async () => {
+    buildStart() {
       if (!resolvedConfig) {
+        console.error("Laravel Splade Vite plugin: config not resolved");
         return;
       }
-      if (resolvedConfig.isProduction) {
-        await exec(
-          `${phpBinary} artisan splade:core:build-components --unprocessed`
-        );
-      } else {
-        await exec(`${phpBinary} artisan splade:core:clear-components`);
-      }
+      const command = resolvedConfig.isProduction ? "artisan splade:core:build-components --unprocessed" : "artisan splade:core:clear-components";
+      console.log("Laravel Splade Vite plugin: Processing components...");
+      exec(`${phpBinary} ${command}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`error: ${error.message}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
+      console.log("Laravel Splade Vite plugin: Components processed");
     }
   };
 }
