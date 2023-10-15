@@ -1,6 +1,6 @@
 {
     "name": "@protonemedia/laravel-splade-vite",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "Vite plugin for Laravel Splade",
     "private": false,
     "keywords": [
@@ -34,6 +34,7 @@
     "dependencies": {},
     "devDependencies": {
         "@types/node": "^20.5.1",
+        "execa": "^8.0.1",
         "typescript": "^5.1.6",
         "unbuild": "^1.2.1",
         "vite": "^4.4.9"

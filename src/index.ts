@@ -1,43 +1,49 @@
-import { exec } from "child_process";
+import { execa } from "execa";
 import { Plugin, ResolvedConfig } from "vite";
 
 type PluginConfig = {
   phpBinary?: string;
+  verbose?: boolean;
 };
 
 export default function LaravelSplade(config: PluginConfig = {}): Plugin {
   let resolvedConfig: undefined | ResolvedConfig = undefined;
   const phpBinary = config?.phpBinary ?? "php";
+  const verbose = config?.verbose ?? false;
 
   return {
     name: "laravel-splade-vite",
     enforce: "pre",
     configResolved(config) {
       resolvedConfig = config;
-      console.log("Laravel Splade Vite plugin: config resolved");
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Config resolved");
+      }
     },
     async buildStart() {
       if (!resolvedConfig) {
-        console.error("Laravel Splade Vite plugin: config not resolved");
+        console.error("Laravel Splade Vite plugin: Config not resolved");
         return;
       }
 
       const command = resolvedConfig.isProduction
-        ? "artisan splade:core:build-components --unprocessed"
-        : "artisan splade:core:clear-components";
+        ? ["artisan", "splade:core:build-components", "--unprocessed"]
+        : ["artisan", "splade:core:clear-components"];
 
-      console.log("Laravel Splade Vite plugin: Processing components...");
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Processing components...");
+      }
 
-      await exec(`${phpBinary} ${command}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`error: ${error.message}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-      });
+      const { stdout, failed, exitCode } = await execa(phpBinary, command);
 
-      console.log("Laravel Splade Vite plugin: Components processed");
+      if (verbose) {
+        console.log(stdout);
+        console.log(
+          failed
+            ? `Laravel Splade Vite plugin: Components failed to process, exit code: ${exitCode}`
+            : "Laravel Splade Vite plugin: Components processed"
+        );
+      }
     },
   };
 }
