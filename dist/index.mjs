@@ -2417,6 +2417,7 @@ function LaravelSplade(config = {}) {
   const phpBinary = config?.phpBinary ?? "php";
   const artisan = config?.artisan ?? "artisan";
   const verbose = config?.verbose ?? false;
+  const execOptions = config?.execOptions ?? {};
   return {
     name: "laravel-splade-vite",
     enforce: "pre",
@@ -2435,7 +2436,7 @@ function LaravelSplade(config = {}) {
       if (verbose) {
         console.log("Laravel Splade Vite plugin: Processing components...");
       }
-      const { stdout, failed, exitCode } = await execa(phpBinary, command);
+      const { stdout, failed, exitCode } = await execa(phpBinary, command, execOptions);
       if (verbose) {
         console.log(stdout);
         console.log(

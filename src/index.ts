@@ -5,6 +5,7 @@ type PluginConfig = {
   phpBinary?: string;
   artisan?: string;
   verbose?: boolean;
+  execOptions?: object;
 };
 
 export default function LaravelSplade(config: PluginConfig = {}): Plugin {
@@ -12,6 +13,7 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
   const phpBinary = config?.phpBinary ?? "php";
   const artisan = config?.artisan ?? "artisan";
   const verbose = config?.verbose ?? false;
+  const execOptions = config?.execOptions ?? {};
 
   return {
     name: "laravel-splade-vite",
@@ -36,7 +38,7 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
         console.log("Laravel Splade Vite plugin: Processing components...");
       }
 
-      const { stdout, failed, exitCode } = await execa(phpBinary, command);
+      const { stdout, failed, exitCode } = await execa(phpBinary, command, execOptions);
 
       if (verbose) {
         console.log(stdout);
