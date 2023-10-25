@@ -3,12 +3,14 @@ import { Plugin, ResolvedConfig } from "vite";
 
 type PluginConfig = {
   phpBinary?: string;
+  artisan?: string;
   verbose?: boolean;
 };
 
 export default function LaravelSplade(config: PluginConfig = {}): Plugin {
   let resolvedConfig: undefined | ResolvedConfig = undefined;
   const phpBinary = config?.phpBinary ?? "php";
+  const artisan = config?.artisan ?? "artisan";
   const verbose = config?.verbose ?? false;
 
   return {
@@ -27,8 +29,8 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
       }
 
       const command = resolvedConfig.isProduction
-        ? ["artisan", "splade:core:build-components", "--unprocessed"]
-        : ["artisan", "splade:core:clear-components"];
+        ? [artisan, "splade:core:build-components", "--unprocessed"]
+        : [artisan, "splade:core:clear-components"];
 
       if (verbose) {
         console.log("Laravel Splade Vite plugin: Processing components...");

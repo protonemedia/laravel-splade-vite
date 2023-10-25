@@ -2429,6 +2429,7 @@ function execa(file, args, options) {
 function LaravelSplade(config = {}) {
   let resolvedConfig = void 0;
   const phpBinary = config?.phpBinary ?? "php";
+  const artisan = config?.artisan ?? "artisan";
   const verbose = config?.verbose ?? false;
   return {
     name: "laravel-splade-vite",
@@ -2444,7 +2445,7 @@ function LaravelSplade(config = {}) {
         console.error("Laravel Splade Vite plugin: Config not resolved");
         return;
       }
-      const command = resolvedConfig.isProduction ? ["artisan", "splade:core:build-components", "--unprocessed"] : ["artisan", "splade:core:clear-components"];
+      const command = resolvedConfig.isProduction ? [artisan, "splade:core:build-components", "--unprocessed"] : [artisan, "splade:core:clear-components"];
       if (verbose) {
         console.log("Laravel Splade Vite plugin: Processing components...");
       }
