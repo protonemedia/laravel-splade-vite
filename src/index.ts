@@ -15,29 +15,7 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
   const verbose = config?.verbose ?? false;
   const execOptions = config?.execOptions ?? {};
 
-  return {
-    name: "laravel-splade-vite",
-    enforce: "pre",
-    configResolved(config) {
-      resolvedConfig = config;
-      if (verbose) {
-        console.log("Laravel Splade Vite plugin: Config resolved");
-      }
-    },
-    async buildStart() {
-      if (!resolvedConfig) {
-        console.error("Laravel Splade Vite plugin: Config not resolved");
-        return;
-      }
-
-      const command = resolvedConfig.isProduction
-        ? [artisan, "splade:core:build-components", "--unprocessed"]
-        : [artisan, "splade:core:clear-components"];
-
-      if (verbose) {
-        console.log("Laravel Splade Vite plugin: Processing components...");
-      }
-
+  const run = async (command: string[]) => {
       const { stdout, failed, exitCode } = await execa(phpBinary, command, execOptions);
 
       if (verbose) {
@@ -48,6 +26,63 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
             : "Laravel Splade Vite plugin: Components processed"
         );
       }
+
+      return { stdout, failed, exitCode };
+  }
+
+  const generatePluginManifest = async () => {
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Generating plugin manifest...");
+      }
+
+      if (!resolvedConfig) {
+        console.error("Laravel Splade Vite plugin: Config not resolved");
+        return;
+      }
+
+      if(resolvedConfig.isProduction) {
+        if (verbose) {
+          console.log("Laravel Splade Vite plugin: Generating plugin manifest is not needed in production mode");
+        }
+        return;
+      }
+
+      await run([artisan, "splade:core:generate-plugin-manifest"]);
+
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Plugin manifest generated");
+      }
+  }
+
+  return {
+    name: "laravel-splade-vite",
+    enforce: "pre",
+    configResolved(config) {
+      resolvedConfig = config;
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Config resolved");
+      }
+    },
+    async watchChange() {
+      await generatePluginManifest();
+    },
+    async buildStart() {
+      if (!resolvedConfig) {
+        console.error("Laravel Splade Vite plugin: Config not resolved");
+        return;
+      }
+
+      await generatePluginManifest();
+
+      const extractComponentsCommand = resolvedConfig.isProduction
+        ? [artisan, "splade:core:build-components", "--unprocessed"]
+        : [artisan, "splade:core:clear-components"];
+
+      if (verbose) {
+        console.log("Laravel Splade Vite plugin: Processing components...");
+      }
+
+      await run(extractComponentsCommand);
     },
   };
 }
