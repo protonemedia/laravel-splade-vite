@@ -40,13 +40,6 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
         return;
       }
 
-      if(resolvedConfig.isProduction) {
-        if (verbose) {
-          console.log("Laravel Splade Vite plugin: Generating plugin manifest is not needed in production mode");
-        }
-        return;
-      }
-
       await run([artisan, "splade:core:generate-plugin-manifest"]);
 
       if (verbose) {
@@ -62,9 +55,6 @@ export default function LaravelSplade(config: PluginConfig = {}): Plugin {
       if (verbose) {
         console.log("Laravel Splade Vite plugin: Config resolved");
       }
-    },
-    async watchChange() {
-      await generatePluginManifest();
     },
     async buildStart() {
       if (!resolvedConfig) {

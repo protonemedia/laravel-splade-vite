@@ -2436,12 +2436,6 @@ function LaravelSplade(config = {}) {
       console.error("Laravel Splade Vite plugin: Config not resolved");
       return;
     }
-    if (resolvedConfig.isProduction) {
-      if (verbose) {
-        console.log("Laravel Splade Vite plugin: Generating plugin manifest is not needed in production mode");
-      }
-      return;
-    }
     await run([artisan, "splade:core:generate-plugin-manifest"]);
     if (verbose) {
       console.log("Laravel Splade Vite plugin: Plugin manifest generated");
@@ -2455,9 +2449,6 @@ function LaravelSplade(config = {}) {
       if (verbose) {
         console.log("Laravel Splade Vite plugin: Config resolved");
       }
-    },
-    async watchChange() {
-      await generatePluginManifest();
     },
     async buildStart() {
       if (!resolvedConfig) {
